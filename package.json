@@ -1,0 +1,28 @@
+{
+  "name": "linq2mysql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zsea/linq2mysql.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zsea/linq2mysql/issues"
+  },
+  "homepage": "https://github.com/zsea/linq2mysql#readme",
+  "dependencies": {
+    "acorn": "^5.7.2",
+    "linq2sql": "^1.0.0",
+    "mysql": "^2.16.0"
+  },
+  "devDependencies": {
+    "power-assert": "^1.6.0"
+  }
+}
