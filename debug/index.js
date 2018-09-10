@@ -1,5 +1,5 @@
 var linq = require('../lib/index');
-var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10",function(sql,values){
+var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10", function (sql, values) {
     console.log(sql);
 });
 process.on('unhandledRejection', function (reason, p) {
@@ -81,20 +81,20 @@ async function main(params) {
     }).skip(1).take(1).toArray();
     console.log(users);
     */
-   /*
-    var user = await db.table('users').innerJoin('scores').on((p, q) => p.id == q.userid).where(p => p.age >= 0).orderByDescending(p => p.id).thenBy(p => p.id).select((p, q) => {
-        p.id,
-            p.username,
-            p.password,
-            p.age,
-            q.score
-    }).first();
-    console.log(user);
-    */
+    /*
+     var user = await db.table('users').innerJoin('scores').on((p, q) => p.id == q.userid).where(p => p.age >= 0).orderByDescending(p => p.id).thenBy(p => p.id).select((p, q) => {
+         p.id,
+             p.username,
+             p.password,
+             p.age,
+             q.score
+     }).first();
+     console.log(user);
+     */
 
     //测试group by
-   var user = await db.table('users').groupBy(p=>p.age).toArray()
-   console.log(user);
+    var user = await db.table('users').where({ id: 1 }).update({id:1});
+    console.log(user);
     process.exit();
 }
 main();
