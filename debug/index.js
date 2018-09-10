@@ -1,5 +1,7 @@
 var linq = require('../lib/index');
-var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10");
+var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10",function(sql,values){
+    console.log(sql);
+});
 process.on('unhandledRejection', function (reason, p) {
     console.error("Promise中有未处理的错误", p, " 错误原因: ", reason);
     // application specific logging, throwing an error, or other logic here
