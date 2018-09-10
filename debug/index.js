@@ -93,7 +93,7 @@ async function main(params) {
      */
 
     //测试group by
-    var user = await db.table('users').where({ id: 1 }).update({id:1});
+    var user = await db.table('users').leftJoin('scores').on((p,q)=>p.id == q.userid).where({ id: 1 }).where((p,q)=>q.score>10).toArray();
     console.log(user);
     process.exit();
 }

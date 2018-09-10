@@ -1,2 +1,2 @@
 var linq = require('../lib/linq');
-console.log(new linq('db').table('tb').where(p => p.x > 2).toSql())
+console.log(new linq('test').table('users').leftJoin('scores').on((p,q)=>p.id == q.userid).where({ id: 1 }).where((p,q)=>q.score>10).toSql())
