@@ -1,6 +1,6 @@
 {
   "name": "linq2mysql",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/zsea/linq2mysql#readme",
   "dependencies": {
     "acorn": "^5.7.2",
-    "linq2sql": "^1.0.0",
+    "linq2sql": "^1.0.1",
     "mysql": "^2.16.0"
   },
   "devDependencies": {
