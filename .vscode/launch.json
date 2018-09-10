@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "启动程序",
             "program": "${workspaceFolder}\\debug\\index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "语句生成",
+            "program": "${workspaceFolder}\\debug\\sql.js"
         }
     ]
 }
