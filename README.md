@@ -120,6 +120,23 @@ await db.table("users").where(p=>p.age==0).delete()
 var count=await db.table("scores").where(p=>p.userid==1).count();
 ```
 
+## SqlTable
+
+在查询的时候，可以使用SQL语句做为一个虚拟表。
+
+```javascript
+var count=await db.table(new linq.SqlTable('select * from scores where score>10')).where(p=>p.userid==1).toArray();
+```
+
+## db.table
+
+该方法返回一个Linq实例，只有在调用```count```,```insert```,```delete```,```update```,```first```,```toArray```，才会返回数据，其它方法均返回对象本身。
+
+### 参数
+
+* table - 可以是表名称，SqlTable对象和db.table实例。
+* [database] - 指定库名称，默认为链接字符串中指定的库名。
+
 # 其它
 
 ```update```,```insert```,```delete```返回参数请参考[mysql](https://github.com/mysqljs/mysql)。
