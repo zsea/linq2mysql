@@ -34,6 +34,11 @@ var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10");
 ```javascript
 await db.table("users").where(p=>p.age==0).toArray()
 ```
+### 带变量的查询
+
+```javascript
+await db.table("users").where(p=>p.age==age,{age:0}).toArray()
+```
 
 ### 只返回第一个数据
 
@@ -58,6 +63,25 @@ await db.table("users").where(p=>p.age==0).skip(1).take(1).toArray()
 ```javascript
 await db.table("users").where(p=>p.age==0).select(p=>{p.age,p.id}).toArray()
 ```
+
+### 查询大量数据
+
+当数据量特别大的时候，如果直接返回大量数据，将会造成溢出。
+
+```javascript
+await db.table("users").where(p=>p.age==0).each(function(row){});
+await db.table("users").where(p=>p.age==0).each(async function(row){});
+await db.table("users").where(p=>p.age==0).each(10,function(row){});
+```
+
+each方法共有两个参数：
+
+* 第一个参数:指定并发处理的数量，该参数可以省略。
+* 第二个参数:指定处理的函数，当函数返回```false```取消后续的执行。
+
+each方法返回值为已处理的总行数。
+
+**返回值受javascript数据类型大小限制**
 
 ### 排序
 
@@ -136,6 +160,23 @@ var count=await db.table(new linq.SqlTable('select * from scores where score>10'
 
 * table - 可以是表名称，SqlTable对象和db.table实例。
 * [database] - 指定库名称，默认为链接字符串中指定的库名。
+
+## db.execute
+
+执行sql语句，并返回结果。
+
+```javascript
+await db.each(sql,[values]);
+```
+
+## db.each
+
+执行sql语句，并通过流模式处理返回的数据。
+
+```javascript
+await db.each(sql,[values],[max],callback);
+```
+
 
 # 其它
 

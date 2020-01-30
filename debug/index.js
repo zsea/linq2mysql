@@ -1,6 +1,6 @@
 var linq = require('../lib/index');
 var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10", function (sql, values) {
-    console.log(sql);
+    //console.log(sql);
 });
 process.on('unhandledRejection', function (reason, p) {
     console.error("Promise中有未处理的错误", p, " 错误原因: ", reason);
@@ -90,11 +90,24 @@ async function main(params) {
              q.score
      }).first();
      console.log(user);
-     */
+    
 
     //测试group by
     var user = await db.table('users').leftJoin('scores').on((p,q)=>p.id == q.userid).where({ id: 1 }).where((p,q)=>q.score>10).toArray();
     console.log(user);
+    process.exit();
+     */
+
+     //测试流
+    var total = await db.each("select * from users",[],async function(row,index){
+        //console.log(row);
+        console.log(index,Date.now());
+        //return false;
+        return new Promise(function(resolve){
+            setTimeout(resolve,5000);
+        })
+    });
+    console.log("处理总数量",total)
     process.exit();
 }
 main();
