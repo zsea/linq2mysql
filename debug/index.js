@@ -1,6 +1,6 @@
 var linq = require('../lib/index');
 var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10", function (sql, values) {
-    //console.log(sql);
+    console.log(sql);
 });
 process.on('unhandledRejection', function (reason, p) {
     console.error("Promise中有未处理的错误", p, " 错误原因: ", reason);
@@ -98,7 +98,8 @@ async function main(params) {
     process.exit();
      */
 
-     //测试流
+    //测试流
+    /*
     var total = await db.each("select * from users",[],async function(row,index){
         //console.log(row);
         console.log(index,Date.now());
@@ -108,6 +109,38 @@ async function main(params) {
         })
     });
     console.log("处理总数量",total)
+    */
+
+    //测试事务
+    /*let trans = await db.beginTransaction();
+    await trans.table("scores").insert([{
+        userid:1,
+        score:50
+    },{
+        userid:1,
+        score:50
+    },{
+        userid:1,
+        score:50
+    }]);
+    // await trans.table("scores").insert({
+    //     userid:1,
+    //     score:50
+    // });
+    // await trans.table("scores").insert({
+    //     userid:1,
+    //     score:50
+    // });
+    await trans.commit();
+    console.log("事务完成")
+    */
+    let exists = await db.table("scores").where({ id: 1 }).insertOrUpdate({ userid: 1, score: 50 }, function (e, m) {
+        return {
+            entity: { userid: 1, score: 99 },
+            mode: "INSERT"
+        }
+    })
+    console.log(exists);
     process.exit();
 }
 main();

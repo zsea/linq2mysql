@@ -119,9 +119,18 @@ await db.table('users').insert({
         password:'admin888',
         age:39
     })
+await db.table('users').insert([{
+        username:'admin',
+        password:'admin888',
+        age:39
+    },{
+        username:'admin',
+        password:'admin888',
+        age:39
+    }])
 ```
 
-```insert``` 方法参数只能是一个对象。
+```insert``` 方法参数可以是一个对象或数组。
 
 ## Update
 
@@ -144,17 +153,44 @@ await db.table("users").where(p=>p.age==0).delete()
 var count=await db.table("scores").where(p=>p.userid==1).count();
 ```
 
+## Exists
+
+判断指定的查询条件是否在数据库中有数据。
+
+```javascript
+var exists=await db.table("scores").where(p=>p.userid==1).exists();
+```
+
 ## SqlTable
 
 在查询的时候，可以使用SQL语句做为一个虚拟表。
 
 ```javascript
-var count=await db.table(new linq.SqlTable('select * from scores where score>10')).where(p=>p.userid==1).toArray();
+var items=await db.table(new linq.SqlTable('select * from scores where score>10')).where(p=>p.userid==1).toArray();
 ```
+
+## 更新或挺入对象
+
+在某些时候，我们需要判断指定查询条修的在数据库中是否有值，在有的时候调用更新语句，没有的时候调用写入语句。
+
+```javascript
+await db.table("scores").where({ id: 1 }).insertOrUpdate({ userid: 1, score: 50 });
+await db.table("scores").where({ id: 1 }).insertOrUpdate({ userid: 1, score: 50 }, function (e, m) {
+        return {
+            entity: { userid: 1, score: 99 },
+            mode: "INSERT"
+        }
+    })
+```
+
+```insertOrUpdate```方法有两入参数，```insertOrUpdate(entity,handler)```
+
+* entity 要插入或更新的对象
+* handler 在更新或插入对象前，对对象数据进行处理，```handler```有两个参数```handler(entity,mode)```,```entity```是```insertOrUpdate```方法传入的数据对象，```mode```是将进行的操作```UPDATE```或```INSERT```。返回值是一个对象，有两个属性：```entity```是要插入或更新的对象，```mode```是将要进行的操作，可选值同上。
 
 ## db.table
 
-该方法返回一个Linq实例，只有在调用```count```,```insert```,```delete```,```update```,```first```,```toArray```，才会返回数据，其它方法均返回对象本身。
+该方法返回一个Linq实例，只有在调用```count```,```insert```,```delete```,```update```,```first```,```toArray```,```exists```,```insertOrUpdate```，才会返回数据，其它方法均返回对象本身。
 
 ### 参数
 
@@ -166,7 +202,7 @@ var count=await db.table(new linq.SqlTable('select * from scores where score>10'
 执行sql语句，并返回结果。
 
 ```javascript
-await db.each(sql,[values]);
+await db.execute(sql,[values]);
 ```
 
 ## db.each
@@ -177,6 +213,31 @@ await db.each(sql,[values]);
 await db.each(sql,[values],[max],callback);
 ```
 
+# 事务
+
+```MyISAM```引擎不支持事务操作。
+
+## 开始一个事务
+
+```javascript
+let trans = await db.beginTransaction();
+```
+
+事件开始后，你可以像```db```一样进行数据库操作
+
+## 提交事务
+
+```javascript
+await trans.commit();
+```
+
+## 回滚事务
+
+```javascript
+await trans.rollback();
+```
+
+*无论是提交还是回滚事务，当前事务的连接都将释放回链接池中。*
 
 # 其它
 
