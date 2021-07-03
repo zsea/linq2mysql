@@ -171,7 +171,7 @@ var items=await db.table(new linq.SqlTable('select * from scores where score>10'
 
 ## 更新或插入对象
 
-在某些时候，我们需要判断指定查询条修的在数据库中是否有值，在有的时候调用更新语句，没有的时候调用写入语句。
+在某些时候，我们需要判断指定查询条件的在数据库中是否有值，在有的时候调用更新语句，没有的时候调用写入语句。
 
 ```javascript
 await db.table("scores").where({ id: 1 }).insertOrUpdate({ userid: 1, score: 50 });
