@@ -169,7 +169,7 @@ var exists=await db.table("scores").where(p=>p.userid==1).exists();
 var items=await db.table(new linq.SqlTable('select * from scores where score>10')).where(p=>p.userid==1).toArray();
 ```
 
-## 更新或挺入对象
+## 更新或插入对象
 
 在某些时候，我们需要判断指定查询条修的在数据库中是否有值，在有的时候调用更新语句，没有的时候调用写入语句。
 
@@ -223,7 +223,7 @@ await db.each(sql,[values],[max],callback);
 let trans = await db.beginTransaction();
 ```
 
-事件开始后，你可以像```db```一样进行数据库操作
+事务开始后，你可以像```db```一样进行数据库操作
 
 ## 提交事务
 
@@ -242,3 +242,5 @@ await trans.rollback();
 # 其它
 
 ```update```,```insert```,```delete```返回参数请参考[mysql](https://github.com/mysqljs/mysql)。
+
+在连接参数中指定```supportBigNumbers```而没有指定```bigNumberStrings```时，```bigint```类型的数据将被转换为Javascript中的```BigInt```类型。
