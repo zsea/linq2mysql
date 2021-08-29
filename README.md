@@ -91,15 +91,15 @@ each方法返回值为已处理的总行数。
 * orderByDescending - 降序
 * thenByDescending - 降序
 
-### 链接
+### 连接
 
-支持左链接、右链接、内链接
+支持左连接、右连接、内连接
 
 * leftJoin
 * rightJoin
 * innerJoin
 
-链接方法返回的对象支持```on```方法，用于添加链接条件；```on```方法返回的对象不再具有```on```方法。
+连接方法返回的对象支持```on```方法，用于添加连接条件；```on```方法返回的对象不再具有```on```方法。
 
 ```javascript
 await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).where(p=>p.age>=0).select((p,q)=>{
@@ -108,6 +108,12 @@ await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).where(p=>p.
         p.password,
         p.age,
         q.score
+    }).toArray();
+```
+在连接查询中，有些时候只需要返回一个表的所有字段，可以使用```*```来指定，多个表的字段输出，使用```,```分隔。
+
+```javascript
+await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).where(p=>p["*"]
     }).toArray();
 ```
 
