@@ -14,7 +14,7 @@ npm install --save linq2mysql
 
 ```javascript
 var linq = require('linq2mysql');
-var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10");
+var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10&charset=utf8mb4");
 ```
 
 具体数据库连接参数请参考[mysql](https://github.com/mysqljs/mysql)。
@@ -125,6 +125,15 @@ await db.table('users').insert({
         password:'admin888',
         age:39
     })
+await db.table('users').insert({
+        username:'admin',
+        password:'admin888',
+        age:39
+    },{
+        username:'admin',
+        password:'chagepwd',
+        age:40
+    })
 await db.table('users').insert([{
         username:'admin',
         password:'admin888',
@@ -138,6 +147,9 @@ await db.table('users').insert([{
 
 ```insert``` 方法参数可以是一个对象或数组。
 
+当包含第二个参数时，第一个参数只能是一个对象，此时，只能插入一个对象。当第一个参入写入到数据库中发生主键冲突时，使用第二个参数更新冲突的数据库行。
+当第二个参数是一个表达式时，第三个参数为表达式的常量。
+
 ## Update
 
 ```javascript
@@ -146,6 +158,8 @@ await db.table("scores").where(p=>p.userid==1).update(p=>{
         p.score=p.score+1
     });
 ```
+
+> 在```update```语句中，不支持```p.x++``这种语句。
 
 ## Delete
 
@@ -176,6 +190,8 @@ var items=await db.table(new linq.SqlTable('select * from scores where score>10'
 ```
 
 ## 更新或插入对象
+
+> 已废弃，请直接使用```insert```的```replacer```参数。
 
 在某些时候，我们需要判断指定查询条件的在数据库中是否有值，在有的时候调用更新语句，没有的时候调用写入语句。
 
