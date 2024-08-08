@@ -1,7 +1,7 @@
 {
   "name": "linq2mysql",
-  "version": "2.0.0",
-  "description": "",
+  "version": "2.0.1",
+  "description": "In Node.js, query the MySQL database using Linq syntax.",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
