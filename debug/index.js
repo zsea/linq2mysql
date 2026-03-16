@@ -133,7 +133,7 @@ async function main(params) {
     // });
     await trans.commit();
     console.log("事务完成")
-    */
+    
     let exists = await db.table("scores").where({ id: 1 }).insertOrUpdate({ userid: 1, score: 50 }, function (e, m) {
         return {
             entity: { userid: 1, score: 99 },
@@ -141,6 +141,8 @@ async function main(params) {
         }
     })
     console.log(exists);
+    */
+   await db.table('settings').insert({keys:'A',value:'vvvv',created_at:Date.now(),updated_at:Date.now()},{value:'修改后',updated_at:0});
     process.exit();
 }
 main();

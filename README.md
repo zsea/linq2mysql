@@ -14,7 +14,7 @@ npm install --save linq2mysql
 
 ```javascript
 var linq = require('linq2mysql');
-var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10");
+var db = new linq("mysql://root@127.0.0.1/linq?connectionLimit=10&charset=utf8mb4");
 ```
 
 具体数据库连接参数请参考[mysql](https://github.com/mysqljs/mysql)。
@@ -63,6 +63,7 @@ await db.table("users").where(p=>p.age==0).skip(1).take(1).toArray()
 ```javascript
 await db.table("users").where(p=>p.age==0).select(p=>{p.age,p.id}).toArray()
 ```
+
 
 ### 查询大量数据
 
@@ -113,9 +114,43 @@ await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).where(p=>p.
 在连接查询中，有些时候只需要返回一个表的所有字段，可以使用```*```来指定，多个表的字段输出，使用```,```分隔。
 
 ```javascript
-await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).where(p=>p["*"]
+await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).select(p=>p["*"]).toArray();
+```
+
+连接多个表时，可以在```on```方法后继续使用**连接方法**。
+
+```javascript
+await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).leftJoin('class').on((u,c)=>u.cid==c.id).where(p=>p.age>=0).select((p,q)=>{
+        p.id,
+        p.username,
+        p.password,
+        p.age,
+        q.score
     }).toArray();
 ```
+
+### 返回字段
+
+在前面已经简单说过返回字段的选择，该节将详细描述```select```函数语法。
+
+在```linq2mysql```中，使用```select```来选择指定的函数，若从未使用过```select```，默认将返回所有字段。
+
+```select```需要传入一个箭头函数，函数的参数就是表对象，当连接了多个表时，按连接顺序传入。
+
+```select```函数中，可以为字段指定别名，这在连接多个表时，表中有相同名称字段时特别有用。
+
+```javascript
+await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).leftJoin('class').on((u,c)=>u.cid==c.id).where(p=>p.age>=0).select((p,q,c)=>{
+        p.id,
+        p.username,
+        p.password,
+        p.age,
+        q.score,
+        classname=c.name
+    }).toArray();
+```
+
+当连接多个表时，若需要返回某个表中的所有字段，使用```*```语法，示例见上面章节。
 
 ## Insert
 
@@ -124,6 +159,15 @@ await db.table('users').insert({
         username:'admin',
         password:'admin888',
         age:39
+    })
+await db.table('users').insert({
+        username:'admin',
+        password:'admin888',
+        age:39
+    },{
+        username:'admin',
+        password:'chagepwd',
+        age:40
     })
 await db.table('users').insert([{
         username:'admin',
@@ -138,6 +182,9 @@ await db.table('users').insert([{
 
 ```insert``` 方法参数可以是一个对象或数组。
 
+当包含第二个参数时，第一个参数只能是一个对象，此时，只能插入一个对象。当第一个参入写入到数据库中发生主键冲突时，使用第二个参数更新冲突的数据库行。
+当第二个参数是一个表达式时，第三个参数为表达式的常量。
+
 ## Update
 
 ```javascript
@@ -146,6 +193,8 @@ await db.table("scores").where(p=>p.userid==1).update(p=>{
         p.score=p.score+1
     });
 ```
+
+> 在```update```语句中，不支持```p.x++``这种语句。
 
 ## Delete
 
@@ -176,6 +225,8 @@ var items=await db.table(new linq.SqlTable('select * from scores where score>10'
 ```
 
 ## 更新或插入对象
+
+> 已废弃，请直接使用```insert```的```replacer```参数。
 
 在某些时候，我们需要判断指定查询条件的在数据库中是否有值，在有的时候调用更新语句，没有的时候调用写入语句。
 

@@ -30,7 +30,9 @@ console.log(new linq('db').table('tb').where(p => p.x > 2).toUpdateSql(p=>{p.x=y
 console.log('=============');
 console.log(new linq('db').table('tb').toUpdateSql(p=>{p.x=3,p.b=4}))
 console.log('=====Insert========');
-console.log(new linq('db').table('tb').toInsertSql({ x: 3, b: 4 }))
+console.log(new linq('db').table('tb').toInsertSql({ x: 3, b: 4 }));
+console.log(new linq('db').table('tb').toInsertSql({ x: 3, b: 4 },{x:2,b:4}));
+console.log(new linq('db').table('tb').toInsertSql({ x: 3, b: 4 },p=>{p.x=p.x+1,p.y="xy`y''"}));
 console.log('=====Delete========');
 console.log(new linq('db').table('tb').toDeleteSql({ x: 3, b: 4 }));
 console.log('=====Delete========');
