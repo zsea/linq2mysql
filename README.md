@@ -64,6 +64,7 @@ await db.table("users").where(p=>p.age==0).skip(1).take(1).toArray()
 await db.table("users").where(p=>p.age==0).select(p=>{p.age,p.id}).toArray()
 ```
 
+
 ### 查询大量数据
 
 当数据量特别大的时候，如果直接返回大量数据，将会造成溢出。
@@ -113,9 +114,43 @@ await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).where(p=>p.
 在连接查询中，有些时候只需要返回一个表的所有字段，可以使用```*```来指定，多个表的字段输出，使用```,```分隔。
 
 ```javascript
-await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).where(p=>p["*"]
+await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).select(p=>p["*"]).toArray();
+```
+
+连接多个表时，可以在```on```方法后继续使用**连接方法**。
+
+```javascript
+await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).leftJoin('class').on((u,c)=>u.cid==c.id).where(p=>p.age>=0).select((p,q)=>{
+        p.id,
+        p.username,
+        p.password,
+        p.age,
+        q.score
     }).toArray();
 ```
+
+### 返回字段
+
+在前面已经简单说过返回字段的选择，该节将详细描述```select```函数语法。
+
+在```linq2mysql```中，使用```select```来选择指定的函数，若从未使用过```select```，默认将返回所有字段。
+
+```select```需要传入一个箭头函数，函数的参数就是表对象，当连接了多个表时，按连接顺序传入。
+
+```select```函数中，可以为字段指定别名，这在连接多个表时，表中有相同名称字段时特别有用。
+
+```javascript
+await db.table('users').leftJoin('scores').on((p,q)=>p.id==q.userid).leftJoin('class').on((u,c)=>u.cid==c.id).where(p=>p.age>=0).select((p,q,c)=>{
+        p.id,
+        p.username,
+        p.password,
+        p.age,
+        q.score,
+        classname=c.name
+    }).toArray();
+```
+
+当连接多个表时，若需要返回某个表中的所有字段，使用```*```语法，示例见上面章节。
 
 ## Insert
 
